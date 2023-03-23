@@ -221,8 +221,13 @@ scanf("%d", &opt);
 
         break;
 
+    case 12:
+
+        break;
+
     default:;
 
 
+    //PRUEBA
     }
 }
