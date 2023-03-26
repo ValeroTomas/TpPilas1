@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "pila.h"
-#include <windows.h>
 
 
 
@@ -10,9 +9,8 @@ int main()
     int num;
     int i;
     int opt;
-    int cantA;
-    int cantB;
-    Pila dada,aux1,aux2,origen,destino,distintos,mazo,jugador1,jugador2,A,B,modelo,limite,mayores,menores,par,impar,pila1,pila2,descarte;
+    int cantA,cantB;
+    Pila dada,aux1,aux2,origen,destino,distintos,mazo,jugador1,jugador2,A,B,modelo,limite,mayores,menores,par,impar,pila1,pila2,descarte,filtro;
     inicpila(&dada);
     inicpila(&aux1);
     inicpila(&aux2);
@@ -33,6 +31,7 @@ int main()
     inicpila(&pila1);
     inicpila(&pila2);
     inicpila(&descarte);
+    inicpila(&filtro);
 
     printf("==========================================\n");
     printf("=                TP1 PILAS               =\n");
@@ -69,9 +68,9 @@ int main()
             apilar(&aux2, desapilar (&dada));
         }
 
-        printf("\nPila con 3 numeros: \n");
+        printf("Pila con 3 numeros: \n");
         mostrar (&aux1);
-        printf("\nPila con 2 numeros: \n");
+        printf("Pila con 2 numeros: \n");
         mostrar(&aux2);
         printf("Pila inicial: \n");
         mostrar(&dada);
@@ -212,24 +211,22 @@ int main()
 
     case 8:
         //Repartir los elementos de la pila MAZO en las pilas JUGADOR1 y JUGADOR2 en forma alternativa
-        //srand(time(NULL));
-        num = 1;
-        for (i=0; i<50; i++)
+        for(i=0; i<50; i++)
         {
-
-            apilar (&mazo,num);
-            num = num+1;
+            leer(&dada);
+            srand(time(NULL));
+            num=rand()%2;
+            if(num==1)
+            {
+                apilar(&aux1, desapilar(&dada));
+            }
+            else
+            {
+                apilar (&aux2, desapilar(&dada));
+            }
+            mostrar (&aux1);
+            mostrar (&aux2);
         }
-
-        while (!pilavacia(&mazo))
-        {
-            apilar (&jugador1, desapilar(&mazo));
-            apilar (&jugador2, desapilar(&mazo));
-        }
-        mostrar (&jugador1);
-        mostrar (&jugador2);
-
-
 
 
         break;
@@ -251,12 +248,9 @@ int main()
         }
         printf ("PILA A TIENE: %i\n",cantA);
         printf ("PILA B TIENE: %i\n",cantB);
-
         break;
 
     case 10:
-        //Cargar las pilas A y B, y luego compararlas, evaluando si son completamente iguales
-        //(en cantidad de elementos, valores que contienen y posición de los mismos). Mostrar por pantalla el resultado.
 
         break;
 
@@ -265,14 +259,53 @@ int main()
         break;
 
     case 12:
-            //Suponiendo la existencia de una pila MODELO (vacía o no), eliminar de la pila DADA
-            // todos los elementos que existan en MODELO.
+        //Suponiendo la existencia de una pila MODELO (vacía o no), eliminar de la pila DADA todos los elementos que existan en MODELO.
+        num=1;
+        for(i=0; i<10; i++)
+        {
+            apilar(&dada, num);
+            num++;
+        }
+        mostrar(&dada);
+        apilar(&modelo, 2);
+        apilar(&modelo, 5);
+        apilar(&modelo, 6);
+        mostrar(&modelo);
 
+            //Recorremos MODELO hasta que esté vacía.
+            while(!pilavacia(&modelo))
+            {
+                //recorremos DADA hasta que esté vacía.
+                while(!pilavacia(&dada))
+                {
+                    //si hay una coincidencia entonces se descarta.
+                    if(tope(&modelo)==tope(&dada))
+                    {
+                        apilar(&descarte, desapilar(&dada));
+                    }
+                    //si no hay coincidencia se mantiene en AUX1.
+                    else
+                    {
+                        apilar(&aux1, desapilar(&dada));
+                    }
+                }
+                //pasamos a hacer el check con el próximo valor de MODELO.
+                apilar(&aux2, desapilar(&modelo));
+                //volvemos a apilar los valores válidos de AUX a DADA para así volver a comprobar con el siguiente valor en MODELO (si existe).
+                while(!pilavacia(&aux1)){
+                    apilar(&dada, desapilar(&aux1));
+                }
+            }
 
+        printf("\nPila filtrada:\n");
+        mostrar(&dada);
+        printf("\nPila basura:\n");
+        mostrar(&descarte);
         break;
 
     default:
         ;
+
 
     }
 }
